@@ -15,8 +15,7 @@ const gamesRoutes = require('./routes/gamesRoutes.js');
 const app = express();
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server }); // i tried to use wss with self-signed certificate for more security but my google chrome blocked it.
-//in real life i would use real certificate and would not transfer the token in this bad way - only in headers
+const wss = new WebSocket.Server({ server });
 
 const gameSubscriptions = {};
 
@@ -49,7 +48,7 @@ schedule.scheduleJob('*/10 * * * * *', function () {
 });
 
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:3000'], credentials: true }));
+app.use(cors({ origin: [process.env.LOCAL_URL, process.env.PRODUCTION_URL], credentials: true }));
 app.use((req, res, next) => {
 	res.header('Access-Control-Allow-Origin', '*');
 	res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
@@ -59,6 +58,10 @@ app.use((req, res, next) => {
 
 app.use('/user', usersRoutes);
 app.use('/game', gamesRoutes);
+
+app.get('/', (req, res) => {
+	res.send('Hello World');
+});
 
 app.use('*', (req, res) => {
 	res.status(404).send({ message: 'Oops page not found' });
