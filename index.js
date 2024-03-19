@@ -48,13 +48,11 @@ schedule.scheduleJob('*/10 * * * * *', function () {
 });
 
 app.use(express.json());
-app.use(cors({ origin: [process.env.LOCAL_URL, process.env.PRODUCTION_URL], credentials: true }));
-app.use((req, res, next) => {
-	res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-	res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-	next();
-});
+const corsOptions = {
+	origin: [process.env.LOCAL_URL, process.env.PRODUCTION_URL],
+	credentials: true,
+};
+app.use(cors(corsOptions));
 
 app.use('/user', usersRoutes);
 app.use('/game', gamesRoutes);
